@@ -1,0 +1,6 @@
+name: MancChallenge
+version: '${project.version}'
+main: carrot.mc.mancchallenge.Main
+api-version: 1.15
+authors: [ Carrotw ]
+description: Plugin con finalidad de informacion para el reto de Diegot_Manc
