@@ -2,14 +2,13 @@ package carrot.mc.mancchallenge.Task;
 
 import carrot.mc.mancchallenge.Main;
 import carrot.mc.mancchallenge.Utils.Chat;
-import carrot.mc.mancchallenge.Utils.PlayerData;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static carrot.mc.mancchallenge.Utils.Chat.formatTimePlayed;
-import static carrot.mc.mancchallenge.Utils.PlayerData.getUseTotem;
+import static carrot.mc.mancchallenge.Utils.PlayerData.*;
 
 public class Score {
 
@@ -33,7 +32,8 @@ public class Score {
                         "§7Jugador: §f" + target.getName(),
                         "§7Tiempo: §f" + formatTimePlayed(target),
                         "§7Totems: §f" + getUseTotem(target),
-                        "§7Daño: §f" + PlayerData.getDamage(target),
+                        "§7Notch: §f" + getNotchUse(target),
+                        "§7Daño: §f" + getDamage(target),
                         " "
                 );
             }

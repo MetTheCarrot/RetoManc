@@ -9,6 +9,15 @@ import static carrot.mc.mancchallenge.Data.PersistentData.INT;
 
 public class PlayerData {
 
+    public static int getNotchUse(Player target){
+        if(PersistentData.has(target, "notchUse", INT)) return PersistentData.get(target, "notchUse", INT);
+        else return 0;
+    }
+
+    public static void setNotchUse(Player target, int value){
+        PersistentData.set(target, "notchUse", INT, value);
+    }
+
     public static int getUseTotem(Player target){
         if(PersistentData.has(target, "totem", INT)) return PersistentData.get(target, "totem", INT);
         else return 0;
