@@ -13,7 +13,8 @@ public class Register {
                 new Regen(),
                 new Death(),
                 new Eat(),
-                new Damage()
+                new Damage(),
+                new Retos()
         );
     }
 

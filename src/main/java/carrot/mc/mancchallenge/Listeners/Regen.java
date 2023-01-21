@@ -8,7 +8,6 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class Regen implements Listener {
 
-
     @EventHandler
     private void cancelRegen(EntityRegainHealthEvent e){
         if(!(e.getEntity() instanceof Player)) return;
