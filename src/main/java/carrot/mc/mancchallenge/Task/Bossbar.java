@@ -84,7 +84,11 @@ public class Bossbar {
     }
 
     public static void addPlayerToBar(Player target){
-        getSingleBar(target).removePlayer(target);
+        try{
+            getSingleBar(target).removePlayer(target);
+        } catch(Exception e){
+            getBar(target).addPlayer(target);
+        }
         getBar(target).addPlayer(target);
     }
 

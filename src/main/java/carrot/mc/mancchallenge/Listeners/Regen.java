@@ -12,7 +12,10 @@ public class Regen implements Listener {
     private void cancelRegen(EntityRegainHealthEvent e){
         if(!(e.getEntity() instanceof Player)) return;
         Player target = (Player) e.getEntity();
-        if(PlayerData.canRegean(target)) e.setAmount(1); // La regeneracion 2 cura 1 corazon por segundo
+        if(PlayerData.canRegean(target)){
+            e.setCancelled(false);
+            e.setAmount(1); // La regeneracion 2 cura 1 corazon por segundo
+        }
         else e.setCancelled(true);
     }
 

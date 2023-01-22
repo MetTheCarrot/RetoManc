@@ -36,6 +36,7 @@ public class TRetos {
                     // Reto 11
                     if(day == 11 && cantidadDeItems(target, Material.ELYTRA ) >= 1)
                         PlayerData.completeReto(target, 11);
+                    // Reto 9
                     if(day == 9) {
                         ItemStack[] armor = target.getInventory().getArmorContents();
                         if(isNetheritePiece(armor[0]) && isNetheritePiece(armor[1]) && isNetheritePiece(armor[2]) && isNetheritePiece(armor[3]))

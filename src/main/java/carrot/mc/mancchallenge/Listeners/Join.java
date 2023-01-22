@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import static carrot.mc.mancchallenge.Utils.Chat.color;
+import static carrot.mc.mancchallenge.Utils.Day.checkReto;
 import static carrot.mc.mancchallenge.Utils.Day.getDay;
 
 public class Join implements Listener {
@@ -22,6 +23,7 @@ public class Join implements Listener {
         Score.createScoreboard(target);
         Bossbar.addPlayerToBar(target);
         PlayerData.updateDay(target, getDay());
+        checkReto();
         if(target.hasPlayedBefore()) return;
         target.getInventory().addItem(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
         target.sendMessage(color("&aBienvenido a MancChallenge!"));

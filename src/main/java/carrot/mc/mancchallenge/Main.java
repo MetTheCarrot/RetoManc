@@ -1,11 +1,8 @@
 package carrot.mc.mancchallenge;
 
 import carrot.mc.mancchallenge.Commands.Public;
-import carrot.mc.mancchallenge.Commands.Reload;
-import carrot.mc.mancchallenge.Discord.DiscordBot;
 import carrot.mc.mancchallenge.Task.Pause;
 import carrot.mc.mancchallenge.Utils.Day;
-import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static carrot.mc.mancchallenge.Discord.DiscordBot.startBot;
@@ -20,7 +17,8 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        getDay();
+        Day.updateDayPDC(getDay());
+        Day.setPause(true);
         checkTime();
         registerListeners();
         updateGlobalScoboard();
@@ -31,7 +29,7 @@ public final class Main extends JavaPlugin {
         bossbarTask();
         taskRetos();
         getCommand("pause").setExecutor(new Public());
-        getCommand("reloadconfig").setExecutor(new Reload());
+        //getCommand("reloadconfig").setExecutor(new Reload());
     }
 
     @Override

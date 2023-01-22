@@ -1,9 +1,7 @@
 package carrot.mc.mancchallenge.Discord;
 
-import carrot.mc.mancchallenge.Main;
 import carrot.mc.mancchallenge.Task.Bossbar;
 import carrot.mc.mancchallenge.Utils.Day;
-import carrot.mc.mancchallenge.Utils.PlayerData;
 import carrot.mc.mancchallenge.Utils.RetoUtils;
 import carrot.mc.mancchallenge.Utils.Timestamp;
 import net.dv8tion.jda.api.*;
@@ -24,9 +22,9 @@ import java.util.Objects;
 import static carrot.mc.mancchallenge.Utils.PlayerData.getDamage;
 import static carrot.mc.mancchallenge.Utils.RetoUtils.getCustomCause;
 
+import carrot.dev.CarrotData;
 
 public class DiscordBot {
-
 
     private static TextChannel deathChannelNotify;
     private static TextChannel completeRetosChannelNotify;
@@ -34,11 +32,10 @@ public class DiscordBot {
 
     public static void startBot(){
         try{
-            String token = "OTE5MDgzOTQ2NDAxMjIyNjc2.GaqYgq.RpUs4GpB6rRuId7oGHzSnPOcEmjPFwz9GYbNSo";
+            String token = CarrotData.creisteQueSeriaPublicoElTokenFacilmenteJaja;
             String deathChannelID = "1066030685309128714";
             String totemChatChannelId = "1066402371661467728";
             String retosChatChannelID = "1066402344620806256";
-            String loggerChannelID = "1066455224560132237";
             JDA jda = JDABuilder.createDefault(token)
                     .setActivity(Activity.watching("..."))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)

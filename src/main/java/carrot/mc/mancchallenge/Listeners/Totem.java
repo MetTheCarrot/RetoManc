@@ -20,7 +20,7 @@ public class Totem implements Listener {
         if(!haveTotem((Player) e.getEntity())) return;
         int totem = PlayerData.getUseTotem(target) + 1;
         PlayerData.setTotem(target, totem);
-        PlayerData.setRegean(target, 40);
+        PlayerData.setRegean(target, 45);
         if(totem > 3)
             e.setCancelled(true);
         DiscordBot.sendTotemMessage(e);

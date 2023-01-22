@@ -56,7 +56,9 @@ public class Day {
     }
 
     public static int getDay(){
-        return Integer.parseInt(getData("day", "1"));
+        int day =  Integer.parseInt(getData("day", "1"));
+        if(day < 1) day = 1;
+        return day;
     }
 
     public static void setDay(int day){
@@ -66,6 +68,7 @@ public class Day {
     public static void updateDayPDC(int day){
         int dayPDC = (int) (10 * (Math.floor(day / 3.0)));
         broadCast("&a&l¡El día ha cambiado! &7Ahora es el día &a" + day + " &7y el PDC es de &a" + dayPDC + " &7días.");
+        broadCast("&7Recuerda actualizar el servidor para aplicar los cambios correctamente.");
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "pdc cambiardia " + dayPDC);
     }
 
@@ -100,6 +103,11 @@ public class Day {
         return Timestamp.TimestampToHour(String.valueOf(getTotalTimeGlobalPauseTime()));
     }
 
+    public static void setTotalTimeGlobalPlayedTime(int day){
+        int now = Integer.parseInt(getNowTimestamp()) - (day * 86400);
+        setData("playedTime", String.valueOf(now));
+    }
+
     public static int getTotalTimeGlobalPlayedTime(){
         return Integer.parseInt(getData("playedTime", getNowTimestamp()));
     }
@@ -123,7 +131,6 @@ public class Day {
 
     public static String getStartTime(){
         String startTime = getData("startTimestamp", getNowTimestamp());
-        broadCast("Timestamp inicio:" + startTime);
         return Timestamp.getDifferenceTime(startTime, getNowTimestamp());
     }
 
@@ -133,9 +140,8 @@ public class Day {
         int dayTime = (int) Math.floor(playedTime / 86400);
         setDay(dayTime);
         if(dayTime > day){
-            broadCast("&aEl día ha cambiado a " + dayTime + "!");
-            checkReto();
             updateDayPDC(dayTime);
+            checkReto();
             for(Player target: Bukkit.getOnlinePlayers()){
                 updateDay(target, dayTime);
             }
@@ -145,9 +151,7 @@ public class Day {
     public static void checkReto(){
         for(Player target: Bukkit.getOnlinePlayers()){
             // Si el jugador no ha completado el reto del día anterior, se le marca como muerto
-            target.sendMessage("Dia sobrevivido: " + PlayerData.getDaySurvived(target));
             updateDay(target, getDay());
-            target.sendMessage("Completo el reto del día anterior (" + getDaySurvived(target) + "): " + PlayerData.isComplete(target, PlayerData.getDaySurvived(target)));
             if(!PlayerData.isComplete(target, PlayerData.getDaySurvived(target))) PlayerData.setDeath(target);
         }
     }

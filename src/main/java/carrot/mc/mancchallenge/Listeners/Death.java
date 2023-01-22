@@ -1,13 +1,10 @@
 package carrot.mc.mancchallenge.Listeners;
 
 import carrot.mc.mancchallenge.Discord.DiscordBot;
-import carrot.mc.mancchallenge.Utils.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-
-import static carrot.mc.mancchallenge.Utils.RetoUtils.killAll;
 
 public class Death implements Listener {
 
@@ -15,7 +12,6 @@ public class Death implements Listener {
     private void onDeath(PlayerDeathEvent e){
         Player target = e.getEntity();
         target.setGameMode(org.bukkit.GameMode.SPECTATOR);
-        killAll();
         DiscordBot.sendDeathMessage(e);
     }
 

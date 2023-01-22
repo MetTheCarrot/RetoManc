@@ -4,8 +4,6 @@ import carrot.mc.mancchallenge.Data.PersistentData;
 import carrot.mc.mancchallenge.Discord.DiscordBot;
 import carrot.mc.mancchallenge.Main;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static carrot.mc.mancchallenge.Data.PersistentData.INT;
@@ -87,8 +85,6 @@ public class PlayerData {
 
     public static void updateDay(Player target, int day){
         int newDay = day - 1;
-        target.sendMessage("dia: " + day);
-        target.sendMessage("actualizando dia sobrevivido: " + newDay);
         set(target, "daySurvived", String.valueOf(newDay));
     }
 
@@ -104,6 +100,13 @@ public class PlayerData {
         regen1Cora(target);
     }
 
+    public static void toggleReto(Player target, int reto, boolean value){
+        if(value)
+            completeReto(target, reto);
+        else
+            set(target, "reto" + reto, "false");
+    }
+
     public static boolean isComplete(Player target, int reto){
         return Boolean.parseBoolean(get(target, "reto" + reto, "false"));
     }
@@ -114,7 +117,7 @@ public class PlayerData {
 
     public static void setCountMobs(Player target, int reto, String mob, int amount){
         int contador = getCountMobs(target, reto, mob) + amount;
-        target.sendMessage(mob + "-killed: " + contador);
+        //target.sendMessage(mob + "-killed: " + contador);
         set(target, reto + "mobs" + mob, String.valueOf(contador));
     }
 

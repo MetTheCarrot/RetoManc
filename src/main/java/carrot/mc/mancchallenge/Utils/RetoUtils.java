@@ -1,13 +1,10 @@
 package carrot.mc.mancchallenge.Utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class RetoUtils {
 
@@ -19,10 +16,8 @@ public class RetoUtils {
     }
 
     public static void killAll(){
-        for(Player target : Bukkit.getOnlinePlayers()){
-            if(!target.getGameMode().equals(GameMode.SPECTATOR))
-                target.addPotionEffect(new PotionEffect(PotionEffectType.HARM, 1, 254));
-        }
+        for(Player target : Bukkit.getOnlinePlayers())
+            target.setHealth(0);
     }
 
     public static void regen1Cora(Player target){
