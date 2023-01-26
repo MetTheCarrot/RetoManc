@@ -19,46 +19,76 @@ public class RetoUtils {
         return stack.getType() == Material.LIGHT_BLUE_DYE && stack.getItemMeta().getDisplayName().endsWith(color("&6Reliquia Del Fin"));
     }
 
-    public static boolean haveEnchant(ItemStack stack, Enchantment enchant, int level) {
-        if (stack == null || !stack.hasItemMeta()) return false;
-        broadCast("Enchant: " + stack.getItemMeta().hasEnchant(enchant) + " Level: " + stack.getItemMeta().getEnchantLevel(enchant) + " == " + level);
-        return stack.getItemMeta().hasEnchant(enchant) && stack.getItemMeta().getEnchantLevel(enchant) == level;
+    private static boolean isLeatherArmor(ItemStack armor){
+        return armor.getType().equals(Material.LEATHER_HELMET) ||
+                armor.getType().equals(Material.LEATHER_CHESTPLATE) ||
+                armor.getType().equals(Material.LEATHER_LEGGINGS) ||
+                armor.getType().equals(Material.LEATHER_BOOTS);
+    }
+
+    private static boolean isGoldenArmor(ItemStack armor){
+        return armor.getType().equals(Material.GOLDEN_HELMET) ||
+                armor.getType().equals(Material.GOLDEN_CHESTPLATE) ||
+                armor.getType().equals(Material.GOLDEN_LEGGINGS) ||
+                armor.getType().equals(Material.GOLDEN_BOOTS);
+    }
+
+    private static boolean isIronArmor(ItemStack armor){
+        return armor.getType().equals(Material.IRON_HELMET) ||
+                armor.getType().equals(Material.IRON_CHESTPLATE) ||
+                armor.getType().equals(Material.IRON_LEGGINGS) ||
+                armor.getType().equals(Material.IRON_BOOTS);
+    }
+
+    private static boolean isDiamondArmor(ItemStack armor){
+        return armor.getType().equals(Material.DIAMOND_HELMET) ||
+                armor.getType().equals(Material.DIAMOND_CHESTPLATE) ||
+                armor.getType().equals(Material.DIAMOND_LEGGINGS) ||
+                armor.getType().equals(Material.DIAMOND_BOOTS);
+    }
+
+    private static boolean isCotaDeMalla(ItemStack armor){
+        return armor.getType().equals(Material.CHAINMAIL_HELMET) ||
+                armor.getType().equals(Material.CHAINMAIL_CHESTPLATE) ||
+                armor.getType().equals(Material.CHAINMAIL_LEGGINGS) ||
+                armor.getType().equals(Material.CHAINMAIL_BOOTS);
     }
 
     public static boolean isUltraEsqueletoGuerrero(Entity e){
-        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
-            if(!haveEnchant(armor, Enchantment.PROTECTION_ENVIRONMENTAL, 5)) return false;
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.BOW)) return false;
-        return (haveEnchant(weapon, Enchantment.ARROW_DAMAGE, 50));
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents()){
+            if(!isDiamondArmor(armor)) return false;
+        }
+        return true;
     }
 
     public static boolean isUltraEsqueletoInfernal(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.DIAMOND_AXE)) return false;
-        // FIRE_ASPECT 20 && SHARPNESS 100
-        return haveEnchant(weapon, Enchantment.FIRE_ASPECT, 20) && haveEnchant(weapon, Enchantment.DAMAGE_ALL, 100);
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
+            if(!isIronArmor(armor)) return false;
+        return true;
     }
 
     public static boolean isUltraEsqueletoAsesino(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.CROSSBOW)) return false;
-        // SHARPNESS 100
-        return haveEnchant(weapon, Enchantment.DAMAGE_ALL, 100);
+        if(!e.getType().equals(EntityType.SKELETON)) return false;
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
+            if(!isGoldenArmor(armor)) return false;
+        return true;
     }
 
     public static boolean isUltraEsqueletoTactico(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.BOW)) return false;
-        // PUNCH 50 && POWER 110
-        return haveEnchant(weapon, Enchantment.ARROW_KNOCKBACK, 50) && haveEnchant(weapon, Enchantment.ARROW_DAMAGE, 110);
+        if(e.getType() != EntityType.WITHER_SKELETON) return false;
+        for(ItemStack armor : ((WitherSkeleton) e).getEquipment().getArmorContents())
+            if(!isCotaDeMalla(armor)) return false;
+        return true;
     }
 
     public static boolean isUltraEsqueletoPesadilla(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.BOW)) return false;
-        // PUNCH 50 && POWER 110
-        return haveEnchant(weapon, Enchantment.ARROW_DAMAGE, 150);
+        if(e.getType() != EntityType.WITHER_SKELETON) return false;
+        for(ItemStack armor : ((WitherSkeleton) e).getEquipment().getArmorContents())
+            if(!isLeatherArmor(armor)) return false;
+        return true;
     }
 
     public static boolean killEveryClassDay17(Player target){
@@ -71,7 +101,6 @@ public class RetoUtils {
     }
 
     public static void detectDia17(Player target, Entity entity){
-        if(!entity.getType().equals(EntityType.SKELETON)) return;
         // Ultra Esqueleto Guerrero
         if(isUltraEsqueletoGuerrero(entity))
             PlayerData.setCountMobs(target, 17, "ultra_esqueleto_guerrero", 1);
@@ -92,43 +121,39 @@ public class RetoUtils {
     }
 
     private static boolean isEsqueletoGuerrero(Entity e){
-        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
-            if(!haveEnchant(armor, Enchantment.PROTECTION_ENVIRONMENTAL, 4)) return false;
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents()){
+            if(!isDiamondArmor(armor)) return false;
+        }
         return true;
     }
 
     private static boolean isEsqueletoInfernal(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.DIAMOND_AXE)) return false;
-        // FIRE_ASPECT && SHARPNESS
-        return haveEnchant(weapon, Enchantment.FIRE_ASPECT, 20) && haveEnchant(weapon, Enchantment.DAMAGE_ALL, 25);
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
+            if(!isIronArmor(armor)) return false;
+        return true;
     }
 
     private static boolean isEsqueletoAsesino(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.CROSSBOW)) return false;
-        // SHARPNESS
-        return haveEnchant(weapon, Enchantment.DAMAGE_ALL, 50);
+        if(e.getType() != EntityType.SKELETON) return false;
+        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
+            if(!isGoldenArmor(armor)) return false;
+        return true;
     }
 
     private static boolean isEsqueletoTactico(Entity e){
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.BOW)) return false;
-        // PUNCH && POWER
-        return haveEnchant(weapon, Enchantment.ARROW_KNOCKBACK, 50) && haveEnchant(weapon, Enchantment.ARROW_DAMAGE, 40);
-    }
-
-    private static boolean isLeatherArmor(ItemStack armor){
-        return armor.getType().equals(Material.LEATHER_HELMET) || armor.getType().equals(Material.LEATHER_CHESTPLATE) || armor.getType().equals(Material.LEATHER_LEGGINGS) || armor.getType().equals(Material.LEATHER_BOOTS);
+        if(e.getType() != EntityType.WITHER_SKELETON) return false;
+        for(ItemStack armor : ((WitherSkeleton) e).getEquipment().getArmorContents())
+            if(!isCotaDeMalla(armor)) return false;
+        return true;
     }
 
     private static boolean isEsqueletoPesadilla(Entity e){
-        for(ItemStack armor : ((Skeleton) e).getEquipment().getArmorContents())
+        if(e.getType() != EntityType.WITHER_SKELETON) return false;
+        for(ItemStack armor : ((WitherSkeleton) e).getEquipment().getArmorContents())
             if(!isLeatherArmor(armor)) return false;
-        ItemStack weapon = ((Skeleton) e).getEquipment().getItemInMainHand();
-        if(!weapon.getType().equals(Material.BOW)) return false;
-        // POWER
-        return haveEnchant(weapon, Enchantment.ARROW_DAMAGE, 60);
+        return true;
     }
 
     public static boolean killEveryClassDay15(Player target){
@@ -136,7 +161,6 @@ public class RetoUtils {
     }
 
     public static void detectDia15(Player target, Entity entity){
-        if(entity.getType() != EntityType.SKELETON) return;
         // Esqueleto Guerrero
         if(isEsqueletoGuerrero(entity))
             PlayerData.setCountMobs(target, 15, "esqueleto_guerrero", 1);
@@ -174,7 +198,6 @@ public class RetoUtils {
 
     public static boolean isSword(ItemStack stack){
         if(stack == null) return false;
-        if(!stack.hasItemMeta()) return false;
         return stack.getType().name().endsWith("_SWORD");
     }
 

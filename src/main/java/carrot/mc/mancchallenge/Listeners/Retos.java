@@ -1,5 +1,6 @@
 package carrot.mc.mancchallenge.Listeners;
 
+import carrot.mc.mancchallenge.Utils.Chat;
 import carrot.mc.mancchallenge.Utils.PlayerData;
 import carrot.mc.mancchallenge.Utils.RetoUtils;
 import org.bukkit.Bukkit;
@@ -16,10 +17,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.raid.RaidFinishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -75,6 +73,7 @@ public class Retos implements Listener {
         // Restricción reto 13
         if(day == 13){
             if(esReliquia(item)){
+                e.setCancelled(true);
                 target.sendMessage(color("&cNo puedes craftear las reliquias hasta el día 14!"));
             }
         }
@@ -170,7 +169,7 @@ public class Retos implements Listener {
         if (day == 20 && mob.equals(EntityType.CREEPER)) {
             ItemStack itemPlayer = target.getInventory().getItemInMainHand();
             if(RetoUtils.isSword(itemPlayer) && isEnderQuantumCreeper(enemigo))
-                PlayerData.completeReto(target, 21);
+                PlayerData.completeReto(target, 20);
         }
     }
 
@@ -187,17 +186,6 @@ public class Retos implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    private static void romperItem(PlayerItemBreakEvent e){
-        Player target = e.getPlayer();
-        int day = getDay();
-        // Reto 14
-        if(day == 14){
-            ItemStack item = e.getBrokenItem();
-            if(item.getType().equals(Material.ELYTRA)) PlayerData.completeReto(target, 14);
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void finishRaid(RaidFinishEvent e){
         int levelRaid = e.getRaid().getBadOmenLevel();
         for(Player target : e.getWinners())
@@ -205,20 +193,24 @@ public class Retos implements Listener {
             if(getDay() == 16 && levelRaid == 5) PlayerData.completeReto(target, 16);
     }
 
+    public static boolean isShulkerBox(ItemStack item){
+        // si el nombre termina con "BOX" es un shulker box
+        return (item.getType().name().endsWith("BOX"));
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void dropItem(PlayerDropItemEvent e){
         Player target = e.getPlayer();
         ItemStack item = e.getItemDrop().getItemStack();
+        target.sendMessage("dropeaste un item" + item.getType().name());
         int day = getDay();
         if(day == 12){
-            if(item.getType().equals(Material.SHULKER_BOX)){
+            if(isShulkerBox(item)){
                 e.getItemDrop().remove();
-                PlayerData.setDropItem(target, 12, item.getType().name(), 1);
-                if(PlayerData.getDropItem(target, 12, item.getType().name()) == 2) PlayerData.completeReto(target, 12);
+                PlayerData.setDropItem(target, 12, "SHULKER_BOX", 1);
+                if(PlayerData.getDropItem(target, 12, "SHULKER_BOX") == 2) PlayerData.completeReto(target, 12);
             }
         }
     }
-
-
 
 }

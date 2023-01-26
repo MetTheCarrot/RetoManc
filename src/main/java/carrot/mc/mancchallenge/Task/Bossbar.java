@@ -3,43 +3,192 @@ package carrot.mc.mancchallenge.Task;
 import carrot.mc.mancchallenge.Main;
 import carrot.mc.mancchallenge.Utils.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static carrot.mc.mancchallenge.Task.TRetos.isNetheritePiece;
 import static carrot.mc.mancchallenge.Utils.Chat.color;
 import static carrot.mc.mancchallenge.Utils.Day.*;
+import static carrot.mc.mancchallenge.Utils.PlayerData.getCountMobs;
 import static carrot.mc.mancchallenge.Utils.PlayerData.isComplete;
 
 public class Bossbar {
 
-    public static String getReto(int day){
-        String reto = "Sobrevive";
-        if(day == 1) reto = "Crea una tarta"; // check
-        else if(day == 2) reto = "Consigue una poción de respiración";
-        else if(day == 3) reto = "Consigue 1 stack de obsidiana";
-        else if(day == 4) reto = "Mata 50 arañas";
-        else if(day == 5) reto = "Mata 15 arañas de cueva";
-        else if(day == 6) reto = "Realiza una poción de visión nocturna";
-        else if(day == 7) reto = "Realiza una poción de maestro tortuga con mas duración";
-        else if(day == 8) reto = "Invoca un gólem de hierro";
-        else if(day == 9) reto = "Consigue la armadura de Netherite.";
-        else if(day == 10) reto = "Mata al &cPermadeath Demon";
-        else if(day == 11) reto = "Consigue elytras";
-        else if(day == 12) reto = "Consigue 2 shulkers y quémalos";
-        else if(day == 13) reto = "No craftear la reliquia del fin (Hasta dia 14) y matar 20 EnderCreepers";
-        else if(day == 14) reto = "Rompe una elytra";
-        else if(day == 15) reto = "Mata cada uno de los esqueletos clase.";
-        else if(day == 16) reto = "Completa una raid nivel 5";
-        else if(day == 17) reto = "Mata a todos los tipos de esqueleto";
-        else if(day == 18) reto = "Entra al The Beginning";
-        else if(day == 19) reto = "Mata un Wither Boss";
-        else if(day == 20) reto = "Mata un Ender Quantum Creeper con la espada";
+    private static String getRetoProgress(Player target) {
+        int progress = 0;
+        switch (getDay()) {
+            case 1: {
+                if (isComplete(target, 1)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 2: {
+                if (isComplete(target, 2)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 3: {
+                if (isComplete(target, 3)) progress = 64;
+                else progress = TRetos.cantidadDeItems(target, Material.OBSIDIAN);
+                return "(" + progress + "/64)";
+            }
+            case 4: {
+                if (isComplete(target, 4)) progress = 50;
+                else progress = PlayerData.getCountMobs(target, 4, EntityType.SPIDER.name());
+                return "(" + progress + "/50)";
+            }
+            case 5: {
+                if (isComplete(target, 5)) progress = 15;
+                else progress = PlayerData.getCountMobs(target, 5, EntityType.CAVE_SPIDER.name());
+                return "(" + progress + "/15)";
+            }
+            case 6: {
+                if (isComplete(target, 6)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 7: {
+                if (isComplete(target, 7)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 8: {
+                if (isComplete(target, 8)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 9: {
+                if (isComplete(target, 9)) progress = 4;
+                else
+                    for (ItemStack armor : target.getInventory().getArmorContents())
+                        if (isNetheritePiece(armor)) progress++;
+                return "(" + progress + "/4)";
+            }
+            case 10: {
+                if (isComplete(target, 10)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 11: {
+                if (isComplete(target, 11)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 12: {
+                if (isComplete(target, 12)) progress = 2;
+                else progress = PlayerData.getDropItem(target, 12, "SHULKER_BOX");
+                return "(" + progress + "/2)";
+            }
+            case 13: {
+                if (isComplete(target, 13)) progress = 20;
+                else progress = PlayerData.getCountMobs(target, 13, "ender-creeper");
+                return "(" + progress + "/20)";
+            }
+            case 14: {
+                if (isComplete(target, 14)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 15: {
+                if (isComplete(target, 15)) progress = 5;
+                else{
+                    if(getCountMobs(target,15, "esqueleto_guerrero") > 0)
+                        progress ++;
+                    if(getCountMobs(target,15, "esqueleto_infernal") > 0)
+                        progress ++;
+                    if(getCountMobs(target,15, "esqueleto_asesino") > 0)
+                        progress ++;
+                    if(getCountMobs(target,15, "esqueleto_tactico") > 0)
+                        progress ++;
+                    if(getCountMobs(target,15, "esqueleto_pesadilla") > 0)
+                        progress ++;
+                }
+                return "(" + progress + "/5)";
+            }
+            case 16: {
+                if (isComplete(target, 16)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 17: {
+                if (isComplete(target, 17)) progress = 5;
+                else {
+                    if(getCountMobs(target,17, "ultra_esqueleto_guerrero") > 0)
+                        progress ++;
+                    if(getCountMobs(target,17, "ultra_esqueleto_infernal") > 0)
+                        progress ++;
+                    if(getCountMobs(target,17, "ultra_esqueleto_asesino") > 0)
+                        progress ++;
+                    if(getCountMobs(target,17, "ultra_esqueleto_tactico") > 0)
+                        progress ++;
+                    if(getCountMobs(target,17, "ultra_esqueleto_pesadilla") > 0)
+                        progress ++;
+                }
+                return "(" + progress + "/5)";
+            }
+            case 18: {
+                if (isComplete(target, 18)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 19: {
+                if (isComplete(target, 19)) progress++;
+                return "(" + progress + "/1)";
+            }
+            case 20: {
+                if (isComplete(target, 20)) progress++;
+                return "(" + progress + "/1)";
+            }
+            default:
+                return "";
+        }
+    }
 
-        return reto;
+    public static String getReto(int day, Player target){
+        switch(day){
+            case 1:
+                return "Crea una tarta";
+            case 2:
+                return "Consigue una poción de respiración";
+            case 3:
+                return "Consigue 1 stack de obsidiana";
+            case 4:
+                return "Mata 50 arañas";
+            case 5:
+                return "Mata 15 arañas de cueva";
+            case 6:
+                return "Realiza una poción de visión nocturna";
+            case 7:
+                return "Realiza una poción de maestro tortuga con mas duración";
+            case 8:
+                return "Invoca un gólem de hierro";
+            case 9:
+                return "Consigue la armadura de Netherite";
+            case 10:
+            {
+                if(isComplete(target, 10)) return "Mata al &c&mPermadeath Demon";
+                else return "Mata al &cPermadeath Demon";
+            }
+            case 11:
+                return "Consigue elytras";
+            case 12:
+                return "Consigue 2 shulkers y quémalos";
+            case 13:
+                return "No craftear la reliquia del fin (Hasta el día 14) y matar 20 EnderCreepers";
+            case 14:
+                return "Romper una elytra";
+            case 15:
+                return "Mata todo los tipos de esqueletos";
+            case 16:
+                return "Completa una raid de nivel 5";
+            case 17:
+                return "Mata a cada uno de los tipos de esqueletos";
+            case 18:
+                return "Entra al The Beginning";
+            case 19:
+                return "Mata un Wither Boss";
+            case 20:
+                return "Mata un Ender Quantum Creeper con una espada";
+            default:
+                return "Sobrevive";
+        }
     }
 
     public static BarColor getColor(){
@@ -67,7 +216,7 @@ public class Bossbar {
     }
 
     public static String getTitle(Player target){
-        return Chat.formatColor() + "Día " + getDay() + " &7- &f" + (isComplete(target,getDay()) ? "&m" : "") + getReto(getDay()) + "&r &7- &f" + Timestamp.TimestampToHour(Day.diferenciaParaLlegarAlOtroDia());
+        return Chat.formatColor() + "Día " + getDay() + " &7- &f" + (isComplete(target,getDay()) ? "&m" : "") + getReto(getDay(), target) + " " + getRetoProgress(target) + "&r &7- &f" + Timestamp.TimestampToHour(Day.diferenciaParaLlegarAlOtroDia());
     }
 
     public static BossBar getBar(Player target){

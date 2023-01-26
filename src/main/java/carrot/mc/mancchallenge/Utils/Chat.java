@@ -4,6 +4,9 @@ import carrot.mc.mancchallenge.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Chat {
@@ -15,6 +18,14 @@ public class Chat {
     public static void broadCast(String message){
         for(Player target : Bukkit.getOnlinePlayers())
             target.sendMessage(color(message));
+    }
+
+    public static String removeFormat(String text) {
+        List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"));
+        for (String s : list) {
+            text = text.replace("&" + s, "");
+        }
+        return text;
     }
 
     public static void console(Level level, String message){

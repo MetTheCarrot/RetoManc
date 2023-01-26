@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import static carrot.mc.mancchallenge.Utils.Chat.removeFormat;
 import static carrot.mc.mancchallenge.Utils.Day.getDay;
 import static carrot.mc.mancchallenge.Utils.PlayerData.*;
 
@@ -111,7 +112,7 @@ public class DiscordBot {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor("MancChallenge", null, "https://cdn.discordapp.com/avatars/919083946401222676/b4a215f4c968fa30dbd562f9fca21e6a.png?size=1024");
         embed.setTitle("El jugador `" + target.getName() + "` ha completado un reto del día **" + getDay() + "**.");
-        embed.setDescription(getNow() + " completo el reto: " + Bossbar.getReto(getDay()) + "!");
+        embed.setDescription(getNow() + " completo el reto: " + Bossbar.getReto(getDay(), target) + "!");
         embed.setColor(Color.GREEN);
 
         setInfo(embed, target);
@@ -123,7 +124,7 @@ public class DiscordBot {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor("MancChallenge", null, "https://cdn.discordapp.com/avatars/919083946401222676/b4a215f4c968fa30dbd562f9fca21e6a.png?size=1024");
         embed.setTitle("El jugador `" + target.getName() + "` no completo el reto del día **" + getDaySurvived(target) + "**.");
-        embed.setDescription(getNow() + " no completo el reto: " + Bossbar.getReto(getDaySurvived(target)) + "!");
+        embed.setDescription(getNow() + " no completo el reto: " + removeFormat(Bossbar.getReto(getDaySurvived(target), target)) + "!");
         embed.setColor(Color.RED);
 
         setInfo(embed, target);

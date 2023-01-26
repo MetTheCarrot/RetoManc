@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static carrot.mc.mancchallenge.Task.TRetos.taskRetos;
 import static carrot.mc.mancchallenge.Utils.Chat.broadCast;
 import static carrot.mc.mancchallenge.Utils.PlayerData.getDaySurvived;
 import static carrot.mc.mancchallenge.Utils.PlayerData.updateDay;
@@ -39,6 +40,7 @@ public class Day {
             addTotalPauses();
         } else{
             updateDayPDC(getDay());
+            taskRetos();
             setData("pause", "false");
             stopTempEndPauseTime();
         }
@@ -58,7 +60,7 @@ public class Day {
 
     public static int getDay(){
         int day =  Integer.parseInt(getData("day", "1"));
-        if(day < 1) day = 1;
+        if(day == 0) setTotalTimeGlobalPlayedTime(1);
         return day;
     }
 
@@ -74,7 +76,7 @@ public class Day {
     }
 
     public static void startTempPauseTime(){
-        setData("cache.pauseTime", "0");
+        setData("cache.pauseTime", getNowTimestamp());
     }
 
     public static void updateTempPauseTime(){
@@ -151,6 +153,7 @@ public class Day {
 
     public static void checkReto(){
         for(Player target: Bukkit.getOnlinePlayers()){
+            if(getDay() == 0 || getDay() == 1) return;
             // Si el jugador no ha completado el reto del día anterior, se le marca como muerto
             updateDay(target, getDay());
             if(!PlayerData.isComplete(target, PlayerData.getDaySurvived(target))) PlayerData.setDeath(target);
