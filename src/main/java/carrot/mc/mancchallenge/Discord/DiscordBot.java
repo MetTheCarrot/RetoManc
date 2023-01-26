@@ -60,7 +60,7 @@ public class DiscordBot {
 
         embed.addField(":compass: Localización", RetoUtils.getLocationString(target.getLocation()), true);
         embed.addField("\uD83D\uDDFA️ Mundo", RetoUtils.getWorld(target), true);
-        embed.addField(":star: Tiempo jugado: ", Timestamp.TimestampToHour(String.valueOf(Math.round(target.getStatistic(org.bukkit.Statistic.PLAY_ONE_MINUTE) / 20))), true);
+        embed.addField(":star: Tiempo jugado: ", Timestamp.TimestampWithDay(String.valueOf(Math.round(target.getStatistic(org.bukkit.Statistic.PLAY_ONE_MINUTE) / 20))), true);
 
         // Informacion del jugador
 
@@ -70,8 +70,8 @@ public class DiscordBot {
 
         // Información del juego
 
-        embed.addField(":clock10: Tiempo de juego: " + Day.formatTotalTimeGlobalPlayedTime() , ":scroll: Tiempo total: " + Day.getStartTime(), true);
-        embed.addField(":shield: Tiempo de pausa: " + Day.formatTotalTimeGlobalPauseTime(), ":book: Total pausas: " + Day.getTotalPauses(), true);
+        embed.addField(":clock10: Tiempo de juego: " + Day.formatTiempoDeJuego() , ":scroll: Tiempo total: " + Day.formatTiempoDeInicio(), true);
+        embed.addField(":shield: Tiempo de pausa: " + Day.formatTiempoDePausa(), ":book: Total pausas: " + Day.getTotalPauses(), true);
 
     }
 

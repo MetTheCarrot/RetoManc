@@ -18,7 +18,6 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         Day.setPause(true);
-        checkTime();
         registerListeners();
         updateGlobalScoboard();
         startBot();

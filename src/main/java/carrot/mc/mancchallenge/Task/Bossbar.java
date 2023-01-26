@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static carrot.mc.mancchallenge.Task.TRetos.isNetheritePiece;
+import static carrot.mc.mancchallenge.Utils.Chat.broadCast;
 import static carrot.mc.mancchallenge.Utils.Chat.color;
 import static carrot.mc.mancchallenge.Utils.Day.*;
 import static carrot.mc.mancchallenge.Utils.PlayerData.getCountMobs;
@@ -209,7 +210,7 @@ public class Bossbar {
         try{
             int tiempoProximoDia = Integer.parseInt(diferenciaParaLlegarAlOtroDia());
             int days = getDay();
-            return ((1.0/86400) * tiempoProximoDia) + days;
+            return ((1.0/86400) * tiempoProximoDia) + 1;
         } catch(Exception e){
             return 0;
         }

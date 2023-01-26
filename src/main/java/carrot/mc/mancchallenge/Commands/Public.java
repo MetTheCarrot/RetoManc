@@ -38,7 +38,7 @@ public class Public implements CommandExecutor {
                 if(args.length >= 2){
                     try{
                         int newDay = Integer.parseInt(args[1]);
-                        Day.setTotalTimeGlobalPlayedTime(newDay);
+                        Day.forceSetDay(newDay);
                         target.sendMessage(color("&aEl dia actual es: &e" + Day.getDay()));
                     }catch (NumberFormatException e){
                         target.sendMessage(color("&cEl argumento debe ser un numero!"));

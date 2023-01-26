@@ -7,13 +7,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static carrot.mc.mancchallenge.Utils.Timestamp.*;
+import static carrot.mc.mancchallenge.Utils.ConvertTypesUtils.*;
+
 import static carrot.mc.mancchallenge.Task.TRetos.taskRetos;
 import static carrot.mc.mancchallenge.Utils.Chat.broadCast;
-import static carrot.mc.mancchallenge.Utils.PlayerData.getDaySurvived;
 import static carrot.mc.mancchallenge.Utils.PlayerData.updateDay;
 import static carrot.mc.mancchallenge.Utils.Timestamp.getNowTimestamp;
 
 public class Day {
+
+    public static void mensaje(String message){
+        for(Player target : Bukkit.getOnlinePlayers())
+            target.sendMessage(message);
+    }
+
+    private static final boolean debug = false;
 
     private static final CreateFile data = new CreateFile(Main.getPlugin(),"day.yml");
 
@@ -28,44 +37,46 @@ public class Day {
         return data.getConfig().getString(id);
     }
 
-    public static void reload(){
-        data.reloadConfig();
+    // First time
+
+    public static void checkFirstTime(){
+        getData("startTimestamp", getNowTimestamp());
+    }
+
+    // Pausas
+
+    public static boolean isPause(){
+        return bool(getData("pause", "false"));
     }
 
     public static void setPause(boolean pause){
+        setData("pause", str(pause));
+        setData("totalPauses", str(getTotalPauses() + 1));
+        if(debug) mensaje("Total pauses: " + getTotalPauses());
+        if(pause) startTempPauseTime();
+        else stopTempPauseTime();
         if(pause){
-            setData("pause", "true");
-            startTempPauseTime();
             Pause.pauseTask();
-            addTotalPauses();
         } else{
             updateDayPDC(getDay());
             taskRetos();
-            setData("pause", "false");
-            stopTempEndPauseTime();
         }
     }
 
     public static int getTotalPauses(){
-        return Integer.parseInt(getData("totalPauses", "0"));
+        return integer(getData("totalPauses", "0"));
     }
 
-    public static void addTotalPauses(){
-        setData("totalPauses", String.valueOf(getTotalPauses() + 1));
-    }
-
-    public static boolean isPause(){
-        return Boolean.parseBoolean(getData("pause", "false"));
-    }
+    // Day
 
     public static int getDay(){
-        int day =  Integer.parseInt(getData("day", "1"));
-        if(day == 0) setTotalTimeGlobalPlayedTime(1);
+        int day =  integer(getData("day", "1"));
+        if(day == 0) forceSetDay(1);
         return day;
     }
 
-    public static void setDay(int day){
-        setData("day", String.valueOf(day));
+    public static void forceSetDay(int day){
+        setGlobalTimePlayed(day * 86400);
     }
 
     public static void updateDayPDC(int day){
@@ -75,80 +86,106 @@ public class Day {
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "pdc cambiardia " + dayPDC);
     }
 
+    public static String diferenciaParaLlegarAlOtroDia(){
+        return String.valueOf((86400 * getDay()) - getGlobalTimePlayed());
+    }
+
+    // Global Time Played
+
+    public static int getGlobalTimePlayed(){
+        return integer(getData("globalTimePlayed", "0"));
+    }
+
+    public static void setGlobalTimePlayed(int time){
+        setData("globalTimePlayed", str(time));
+    }
+
+    // Global Pause Time
+
+    public static int getGlobalPauseTime(){
+        return integer(getData("globalPauseTime", "0"));
+    }
+
+    public static void setGlobalPauseTime(int time){
+        setData("globalPauseTime", str(time));
+        if(debug) mensaje("Global pause time: " + getGlobalPauseTime());
+    }
+
+    // Cache tiempo de pausa
+
     public static void startTempPauseTime(){
-        setData("cache.pauseTime", getNowTimestamp());
+        setData("tempPauseTime", getNowTimestamp());
     }
 
-    public static void updateTempPauseTime(){
-        long pauseTime = Long.parseLong(getData("cache.pauseTime", "0")) + 1;
-        if(isPause()){
-            setData("cache.pauseTime", String.valueOf(pauseTime));
-            addTimeGlobalPlayedTime(1);
+    public static void stopTempPauseTime(){
+        long difference = Timestamp.differenceTime(getData("tempPauseTime", "0"), getNowTimestamp());
+        setData("tempPauseTime", "0");
+        setGlobalPauseTime((int) (getGlobalPauseTime() + difference));
+        if(debug) mensaje("Temp pause time: " + difference);
+    }
+
+    // Formato
+
+    public static String formatTiempoDeInicio(){
+        String startTimestamp = getData("startTimestamp", getNowTimestamp());
+        return TimestampWithDay(str(differenceTime(startTimestamp, getNowTimestamp())));
+    }
+
+    public static String formatTiempoDeJuego(){
+        return TimestampWithDay(str(getGlobalTimePlayed() - 86400));
+    }
+
+    public static String formatTiempoDePausa(){
+        long cacheTime = 0;
+        if(isPause())
+            cacheTime = Timestamp.differenceTime(getData("tempPauseTime", "0"), getNowTimestamp());
+        return TimestampWithDay(str(getGlobalPauseTime() + cacheTime));
+    }
+
+    public static String formatTiempoDePausaTemporal(){
+        if(isPause())
+            return TimestampWithDay(str(differenceTime(getData("tempPauseTime", "0"), getNowTimestamp())));
+        else
+            return TimestampWithDay(str(0));
+    }
+
+    // Task update
+
+    public static void update(){
+        if(debug){
+            mensaje("-----");
+            mensaje("Pausado? " + isPause());
+            mensaje("Dia: " + getDay());
+            mensaje("Tiempo de inicio: " + formatTiempoDeInicio());
+            mensaje("Tiempo de juego: " + formatTiempoDeJuego());
+            mensaje("Tiempo de pausa global: " + formatTiempoDePausa());
+            mensaje("Total de pausas: " + getTotalPauses());
+            mensaje("Tiempo de pausa temporal: " + formatTiempoDePausaTemporal());
+            mensaje("-----");
         }
-    }
-
-    public static void stopTempEndPauseTime(){
-        int pauseTime = Integer.parseInt(getData("cache.pauseTime", "0"));
-        addTimeGlobalPauseTime(pauseTime); // add time to global pause time
-        addTimeGlobalPlayedTime(pauseTime); // add time to global played time
-        setData("cache.pauseTime", "0");
-    }
-
-    public static int getTotalTimeGlobalPauseTime(){
-        return Integer.parseInt(getData("pauseTime", "0"));
-    }
-
-    public static void addTimeGlobalPauseTime(int seconds){
-        setData("pauseTime", String.valueOf(getTotalTimeGlobalPauseTime() + seconds));
-    }
-
-    public static String formatTotalTimeGlobalPauseTime(){
-        return Timestamp.TimestampToHour(String.valueOf(getTotalTimeGlobalPauseTime()));
-    }
-
-    public static void setTotalTimeGlobalPlayedTime(int day){
-        int now = Integer.parseInt(getNowTimestamp()) - (day * 86400);
-        setData("playedTime", String.valueOf(now));
-    }
-
-    public static int getTotalTimeGlobalPlayedTime(){
-        return Integer.parseInt(getData("playedTime", getNowTimestamp()));
-    }
-
-    public static String formatTotalTimeGlobalPlayedTime(){
-        return Timestamp.getDifferenceTime(String.valueOf(getTotalTimeGlobalPlayedTime()), getNowTimestamp());
-    }
-
-    public static void addTimeGlobalPlayedTime(int seconds){
-        setData("playedTime", String.valueOf(getTotalTimeGlobalPlayedTime() + seconds));
-    }
-
-    public static void debug(int seconds){
-        int add = Integer.parseInt(getNowTimestamp()) - seconds;
-        setData("playedTime", String.valueOf(add));
-    }
-
-    public static void checkTime(){
-        getData("startTimestamp", getNowTimestamp());
-    }
-
-    public static String getStartTime(){
-        String startTime = getData("startTimestamp", getNowTimestamp());
-        return Timestamp.getDifferenceTime(startTime, getNowTimestamp());
-    }
-
-    public static void checkDay(){
-        int day = getDay();
-        double playedTime = Long.parseLong(getNowTimestamp()) - getTotalTimeGlobalPlayedTime();
-        int dayTime = (int) Math.floor(playedTime / 86400);
-        setDay(dayTime);
-        if(dayTime > day){
-            updateDayPDC(dayTime);
+        if(!isPause())
+            setGlobalTimePlayed(getGlobalTimePlayed() + 1);
+        int currentDay = getDay();
+        int newDay = (int) Math.floor(getGlobalTimePlayed()/86400.0);
+        if(currentDay != newDay){
+            updateDayPDC(newDay);
             checkReto();
             for(Player target: Bukkit.getOnlinePlayers()){
-                updateDay(target, dayTime);
+                updateDay(target, newDay);
             }
+            setData("day", str(newDay));
+            mensaje("Dia " + newDay);
         }
+    }
+
+    public static void taskDay(){
+        checkFirstTime();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        }.runTaskTimer(Main.getPlugin(), 0, 20L);
     }
 
     public static void checkReto(){
@@ -158,23 +195,6 @@ public class Day {
             updateDay(target, getDay());
             if(!PlayerData.isComplete(target, PlayerData.getDaySurvived(target))) PlayerData.setDeath(target);
         }
-    }
-
-    public static String diferenciaParaLlegarAlOtroDia(){
-        int playedTime = Integer.parseInt(getNowTimestamp()) - getTotalTimeGlobalPlayedTime();
-        return String.valueOf(86400 - playedTime);
-    }
-
-    public static void taskDay(){
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-
-                checkDay();
-                updateTempPauseTime();
-
-            }
-        }.runTaskTimer(Main.getPlugin(), 0L, 20L);
     }
 
 }

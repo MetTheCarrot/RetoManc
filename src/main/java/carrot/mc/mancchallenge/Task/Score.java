@@ -47,7 +47,7 @@ public class Score {
                                 " ",
                                 "&7Jugador: &f" + target.getName(),
                                 "&7Día: " + formatColor() + Day.getDay() + (Day.isPause() ? " &7(Pausado)" : ""),
-                                "&7Tiempo: &f" + Day.formatTotalTimeGlobalPlayedTime(),
+                                "&7Tiempo: &f" + Day.formatTiempoDeJuego(),
                                 "&7Totems: &f" + getUseTotem(target),
                                 "&7Notch: &f" + getNotchUse(target),
                                 "&7Daño: &f" + getDamage(target),
