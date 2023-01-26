@@ -85,6 +85,9 @@ public class PlayerData {
 
     public static void updateDay(Player target, int day){
         int newDay = day - 1;
+        // Reto 21
+        if(newDay == 21)
+            completeReto(target, 21);
         set(target, "daySurvived", String.valueOf(newDay));
     }
 
@@ -115,9 +118,19 @@ public class PlayerData {
         return Integer.parseInt(get(target, reto + "mobs" + mob, "0"));
     }
 
+    public static void setDropItem(Player target, int reto, String item, int amount){
+        int contador = getDropItem(target, reto, item) + amount;
+        target.sendMessage(item + "-drop: " + contador);
+        set(target, reto + "drop" + item, String.valueOf(contador));
+    }
+
+    public static int getDropItem(Player target, int reto, String item){
+        return Integer.parseInt(get(target, reto + "drop" + item, "0"));
+    }
+
     public static void setCountMobs(Player target, int reto, String mob, int amount){
         int contador = getCountMobs(target, reto, mob) + amount;
-        //target.sendMessage(mob + "-killed: " + contador);
+        target.sendMessage(mob + "-killed: " + contador);
         set(target, reto + "mobs" + mob, String.valueOf(contador));
     }
 

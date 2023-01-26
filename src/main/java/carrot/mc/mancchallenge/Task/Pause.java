@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Pause {
 
     public static void pauseTask(){
-
+        if(Main.getPlugin() == null) return;
         new BukkitRunnable() {
             @Override
             public void run() {

@@ -1,14 +1,14 @@
 package carrot.mc.mancchallenge.Discord;
 
+import carrot.mc.mancchallenge.Main;
 import carrot.mc.mancchallenge.Task.Bossbar;
+import carrot.mc.mancchallenge.Utils.Chat;
 import carrot.mc.mancchallenge.Utils.Day;
 import carrot.mc.mancchallenge.Utils.RetoUtils;
 import carrot.mc.mancchallenge.Utils.Timestamp;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.utils.TimeFormat;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -18,11 +18,11 @@ import static carrot.mc.mancchallenge.Utils.PlayerData.*;
 
 import java.awt.*;
 import java.util.Objects;
+import java.util.logging.Level;
 
 import static carrot.mc.mancchallenge.Utils.PlayerData.getDamage;
 import static carrot.mc.mancchallenge.Utils.RetoUtils.getCustomCause;
-
-import carrot.dev.CarrotData;
+import static carrot.mc.mancchallenge.Discord.DiscordData.*;
 
 public class DiscordBot {
 
@@ -32,10 +32,10 @@ public class DiscordBot {
 
     public static void startBot(){
         try{
-            String token = CarrotData.creisteQueSeriaPublicoElTokenFacilmenteJaja;
-            String deathChannelID = "1066030685309128714";
-            String totemChatChannelId = "1066402371661467728";
-            String retosChatChannelID = "1066402344620806256";
+            String token = getToken();
+            String deathChannelID = getDeathChannel();
+            String totemChatChannelId = getTotemChatChannel();
+            String retosChatChannelID = getRetosChatChannel();
             JDA jda = JDABuilder.createDefault(token)
                     .setActivity(Activity.watching("..."))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
@@ -46,7 +46,11 @@ public class DiscordBot {
             completeRetosChannelNotify = jda.getTextChannelById(retosChatChannelID);
         } catch (Exception e){
             e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage("Error al iniciar el bot de discord, el token es invalido.");
+            Chat.console(Level.SEVERE, "Error al iniciar el bot de discord, el token es invalido.");
+            Chat.console(Level.SEVERE, "No tener un bot iniciado, no podemos comprobar tus resultados.");
+            Chat.console(Level.SEVERE, "Si no tienes un bot, puedes crear uno en https://discord.com/developers/applications");
+            Chat.console(Level.SEVERE, "El plugin no podra iniciarse hasta entonces.");
+            Main.getPlugin().getPluginLoader().disablePlugin(Main.getPlugin());
         }
     }
 
@@ -82,7 +86,8 @@ public class DiscordBot {
             embed.setDescription("El jugador `" + target.getName() + "` ha usado un tótem de resurrección por un ***" + getCustomCause(Objects.requireNonNull(target.getLastDamageCause())) + "***, solo puede usar " + (3 - getUseTotem(target)) + " tótems.");
         }
         setInfo(embed, target);
-        totemChannelNotify.sendMessage(new MessageBuilder().setEmbeds(embed.build()).build()).queue();
+
+        sendEmbed(totemChannelNotify, embed);
     }
 
     public static void sendDeathMessage(PlayerDeathEvent e){
@@ -90,36 +95,44 @@ public class DiscordBot {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor("MancChallenge", null, "https://cdn.discordapp.com/avatars/919083946401222676/b4a215f4c968fa30dbd562f9fca21e6a.png?size=1024");
         embed.setTitle("Muerte de `" + target.getName() + "`");
-        embed.setDescription(TimeFormat.RELATIVE.now() + " ha perdido el reto en el día **" + getDay() + "** a causa de un ***" + getCustomCause(Objects.requireNonNull(e.getEntity().getLastDamageCause())) + "***.");
+        embed.setDescription(getNow() + " ha perdido el reto en el día **" + getDay() + "** a causa de un ***" + getCustomCause(Objects.requireNonNull(e.getEntity().getLastDamageCause())) + "***.");
         embed.setColor(Color.RED);
 
         setInfo(embed, target);
 
-        deathChannelNotify.sendMessage(new MessageBuilder().setEmbeds(embed.build()).build()).queue();
+        sendEmbed(deathChannelNotify, embed);
+    }
+
+    public static String getNow(){
+        return "<t:" + Timestamp.getNowTimestamp() + ":R>";
     }
 
     public static void sendCompleteReto(Player target){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor("MancChallenge", null, "https://cdn.discordapp.com/avatars/919083946401222676/b4a215f4c968fa30dbd562f9fca21e6a.png?size=1024");
         embed.setTitle("El jugador `" + target.getName() + "` ha completado un reto del día **" + getDay() + "**.");
-        embed.setDescription(TimeFormat.RELATIVE.now() + " completo el reto: " + Bossbar.getReto(getDay()) + "!");
+        embed.setDescription(getNow() + " completo el reto: " + Bossbar.getReto(getDay()) + "!");
         embed.setColor(Color.GREEN);
 
         setInfo(embed, target);
 
-        completeRetosChannelNotify.sendMessage(new MessageBuilder().setEmbeds(embed.build()).build()).queue();
+        sendEmbed(completeRetosChannelNotify, embed);
     }
 
     public static void sendNotCompleteReto(Player target){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor("MancChallenge", null, "https://cdn.discordapp.com/avatars/919083946401222676/b4a215f4c968fa30dbd562f9fca21e6a.png?size=1024");
         embed.setTitle("El jugador `" + target.getName() + "` no completo el reto del día **" + getDaySurvived(target) + "**.");
-        embed.setDescription(TimeFormat.RELATIVE.now() + " no completo el reto: " + Bossbar.getReto(getDaySurvived(target)) + "!");
+        embed.setDescription(getNow() + " no completo el reto: " + Bossbar.getReto(getDaySurvived(target)) + "!");
         embed.setColor(Color.RED);
 
         setInfo(embed, target);
 
-        completeRetosChannelNotify.sendMessage(new MessageBuilder().setEmbeds(embed.build()).build()).queue();
+        sendEmbed(completeRetosChannelNotify, embed);
+    }
+
+    public static void sendEmbed(TextChannel channel, EmbedBuilder embed){
+        channel.sendMessage(embed.build()).queue();
     }
 
 }

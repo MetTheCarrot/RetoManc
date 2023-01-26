@@ -1,20 +1,23 @@
 package carrot.mc.mancchallenge.Listeners;
 
 import carrot.mc.mancchallenge.Utils.PlayerData;
+import carrot.mc.mancchallenge.Utils.RetoUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.raid.RaidFinishEvent;
@@ -24,54 +27,60 @@ import org.bukkit.potion.PotionType;
 
 import java.util.*;
 
-import static carrot.mc.mancchallenge.Utils.Chat.broadCast;
 import static carrot.mc.mancchallenge.Utils.Chat.color;
 import static carrot.mc.mancchallenge.Utils.Day.getDay;
 import static carrot.mc.mancchallenge.Utils.Day.isPause;
 import static carrot.mc.mancchallenge.Utils.PlayerData.getCountMobs;
 import static carrot.mc.mancchallenge.Utils.PlayerData.setCountMobs;
+import static carrot.mc.mancchallenge.Utils.RetoUtils.*;
 
 public class Retos implements Listener {
 
     // pausas
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void whenDamage(EntityDamageEvent e) {
         if (isPause()) e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void whenDamagePlayer2(EntityDamageByEntityEvent e) {
         if (isPause()) e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void pauseEvent3(BlockBreakEvent e) {
         if (isPause()) e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void pauseEvent4(PlayerInteractEvent e) {
         if (isPause()) e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void pauseEvent5(InventoryOpenEvent e){
         if(isPause()) e.getPlayer().closeInventory();
     }
 
     // retos
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void craftItem(CraftItemEvent e){
         Player target = (Player) e.getWhoClicked();
         ItemStack item = e.getRecipe().getResult();
         int day = getDay();
         // Reto 1
         if(day == 1 && item.getType().equals(Material.CAKE)) PlayerData.completeReto(target, 1);
+        // Restricción reto 13
+        if(day == 13){
+            if(esReliquia(item)){
+                target.sendMessage(color("&cNo puedes craftear las reliquias hasta el día 14!"));
+            }
+        }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void craftPotion(BrewEvent e){
 
         //Players
@@ -104,7 +113,7 @@ public class Retos implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void summonGolem(CreatureSpawnEvent e){
         EntityType type = e.getEntityType();
         if(!type.equals(EntityType.IRON_GOLEM)) return;
@@ -116,10 +125,11 @@ public class Retos implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void killMobs(EntityDeathEvent e){
         if(e.getEntity().getKiller() == null) return;
         Player target = e.getEntity().getKiller();
+        Entity enemigo = e.getEntity();
         EntityType mob = e.getEntityType();
         int day = getDay();
         // Reto 4
@@ -134,14 +144,49 @@ public class Retos implements Listener {
         }
         // Reto 10
         if(day == 10 && mob.equals(EntityType.ENDER_DRAGON)){
-            Location enderDragon = e.getEntity().getLocation();
-            for(Player p : e.getEntity().getWorld().getNearbyEntities(enderDragon, 500, 500, 500).stream().filter(entity -> entity instanceof Player).toArray(Player[]::new)){
-                PlayerData.completeReto(p, 10);
+            for(Player players: Bukkit.getOnlinePlayers()){
+                PlayerData.completeReto(players, 10);
             }
+        }
+        // Reto 12+1
+        if(day == 13 && mob.equals(EntityType.CREEPER)){
+            if(isEnderCreeper(enemigo)) PlayerData.setCountMobs(target, day, "ender-creeper", 1);
+            if(getCountMobs(target, day, "ender-creeper") == 20) PlayerData.completeReto(target, 13);
+        }
+        // Reto 15
+        if(day == 15)
+            RetoUtils.detectDia15(target, enemigo);
+        // Reto 17
+        if(day == 17)
+            RetoUtils.detectDia17(target, enemigo);
+        // Reto 19
+        if(day == 19 && mob.equals(EntityType.WITHER)){
+            Location witherLocation = e.getEntity().getLocation();
+            for(Player players: e.getEntity().getWorld().getNearbyEntities(witherLocation, 100, 100, 100).stream().filter(entity -> entity instanceof Player).toArray(Player[]::new)){
+                PlayerData.completeReto(players, 19);
+            }
+        }
+        // Reto 20
+        if (day == 20 && mob.equals(EntityType.CREEPER)) {
+            ItemStack itemPlayer = target.getInventory().getItemInMainHand();
+            if(RetoUtils.isSword(itemPlayer) && isEnderQuantumCreeper(enemigo))
+                PlayerData.completeReto(target, 21);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    private static void changeDimension(PlayerChangedWorldEvent e){
+        Player target = e.getPlayer();
+        int day = getDay();
+        // Reto 18
+        if(day == 18){
+            String worldName = target.getWorld().getName();
+            if(worldName.equalsIgnoreCase("pdc_the_beginning"))
+                PlayerData.completeReto(target, 18);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void romperItem(PlayerItemBreakEvent e){
         Player target = e.getPlayer();
         int day = getDay();
@@ -152,12 +197,28 @@ public class Retos implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void finishRaid(RaidFinishEvent e){
         int levelRaid = e.getRaid().getBadOmenLevel();
         for(Player target : e.getWinners())
             // Reto 16
             if(getDay() == 16 && levelRaid == 5) PlayerData.completeReto(target, 16);
     }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    private static void dropItem(PlayerDropItemEvent e){
+        Player target = e.getPlayer();
+        ItemStack item = e.getItemDrop().getItemStack();
+        int day = getDay();
+        if(day == 12){
+            if(item.getType().equals(Material.SHULKER_BOX)){
+                e.getItemDrop().remove();
+                PlayerData.setDropItem(target, 12, item.getType().name(), 1);
+                if(PlayerData.getDropItem(target, 12, item.getType().name()) == 2) PlayerData.completeReto(target, 12);
+            }
+        }
+    }
+
+
 
 }

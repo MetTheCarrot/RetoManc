@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +16,7 @@ import static carrot.mc.mancchallenge.Utils.Chat.color;
 
 public class Eat implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void eat(PlayerItemConsumeEvent e){
         Player target = e.getPlayer();
         ItemStack item = e.getItem();

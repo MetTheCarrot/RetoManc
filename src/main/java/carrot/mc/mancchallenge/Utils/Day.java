@@ -38,6 +38,7 @@ public class Day {
             Pause.pauseTask();
             addTotalPauses();
         } else{
+            updateDayPDC(getDay());
             setData("pause", "false");
             stopTempEndPauseTime();
         }

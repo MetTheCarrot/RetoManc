@@ -33,12 +33,11 @@ public class Bossbar {
         else if(day == 13) reto = "No craftear la reliquia del fin (Hasta dia 14) y matar 20 EnderCreepers";
         else if(day == 14) reto = "Rompe una elytra";
         else if(day == 15) reto = "Mata cada uno de los esqueletos clase.";
-        else if(day == 16) reto = "Completa una raid nivel 5.";
-        else if(day == 17) reto = "Consigue 1 stack de diamantes";
-        else if(day == 18) reto = "Mata a todos los tipos de esqueleto";
-        else if(day == 19) reto = "Entra al The Beginning";
-        else if(day == 20) reto = "Mata un Wither Boss";
-        else if(day == 21) reto = "Mata un Ender Quantum Creeper con la espada";
+        else if(day == 16) reto = "Completa una raid nivel 5";
+        else if(day == 17) reto = "Mata a todos los tipos de esqueleto";
+        else if(day == 18) reto = "Entra al The Beginning";
+        else if(day == 19) reto = "Mata un Wither Boss";
+        else if(day == 20) reto = "Mata un Ender Quantum Creeper con la espada";
 
         return reto;
     }

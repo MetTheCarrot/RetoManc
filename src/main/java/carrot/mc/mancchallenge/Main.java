@@ -17,7 +17,6 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        Day.updateDayPDC(getDay());
         Day.setPause(true);
         checkTime();
         registerListeners();
@@ -29,7 +28,6 @@ public final class Main extends JavaPlugin {
         bossbarTask();
         taskRetos();
         getCommand("pause").setExecutor(new Public());
-        //getCommand("reloadconfig").setExecutor(new Reload());
     }
 
     @Override
@@ -43,5 +41,6 @@ public final class Main extends JavaPlugin {
     public static Main getPlugin() {
         return plugin;
     }
+
 
 }

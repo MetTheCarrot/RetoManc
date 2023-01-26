@@ -1,7 +1,10 @@
 package carrot.mc.mancchallenge.Utils;
 
+import carrot.mc.mancchallenge.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 public class Chat {
 
@@ -12,6 +15,10 @@ public class Chat {
     public static void broadCast(String message){
         for(Player target : Bukkit.getOnlinePlayers())
             target.sendMessage(color(message));
+    }
+
+    public static void console(Level level, String message){
+        Main.getPlugin().getLogger().log(level, color(getPrefix() + "&r" + message));
     }
 
     public static String formatColor(){

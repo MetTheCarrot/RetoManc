@@ -6,6 +6,7 @@ import carrot.mc.mancchallenge.Utils.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -17,7 +18,7 @@ import static carrot.mc.mancchallenge.Utils.Day.getDay;
 
 public class Join implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private static void firstJoin(PlayerJoinEvent e){
         Player target = e.getPlayer();
         Score.createScoreboard(target);

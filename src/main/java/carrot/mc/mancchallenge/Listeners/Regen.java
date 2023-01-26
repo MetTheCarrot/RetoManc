@@ -3,12 +3,13 @@ package carrot.mc.mancchallenge.Listeners;
 import carrot.mc.mancchallenge.Utils.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class Regen implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private void cancelRegen(EntityRegainHealthEvent e){
         if(!(e.getEntity() instanceof Player)) return;
         Player target = (Player) e.getEntity();

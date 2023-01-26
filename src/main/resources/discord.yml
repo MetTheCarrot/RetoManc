@@ -1,0 +1,7 @@
+# Ingresa el bot del token aquí.
+token: ''
+canales:
+  # Ingresa el ID del canal de texto aquí.
+  muerte: ''
+  reto: ''
+  totem: ''

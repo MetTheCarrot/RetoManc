@@ -38,7 +38,6 @@ public class PersistentData {
         return PersistentData.get(holder, key, type).equals(value) || value.equals(PersistentData.get(holder, key, type));
     }
 
-
     public static NamespacedKey Key(String string){
         return new NamespacedKey(Main.getPlugin(), string);
     }
