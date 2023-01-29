@@ -8,3 +8,6 @@ commands:
   pause:
     description: Pausa el reto
     usage: /<command>
+  bossbattle:
+    description: Inicia las condiciones para el boss battle
+    usage: /<command>

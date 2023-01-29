@@ -54,6 +54,7 @@ public class Score {
                                 " "
                         )
                 );
+                Bossbar.updateBar();
             }
         }.runTaskTimer(Main.getPlugin(), 0L, 20L);
     }

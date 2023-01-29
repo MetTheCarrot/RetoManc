@@ -5,7 +5,7 @@ import carrot.mc.mancchallenge.Main;
 
 public class DiscordData {
 
-    private static final boolean debug = true;
+    private static final boolean debug = false;
     private static final CreateFile data = new CreateFile(Main.getPlugin(), "discord.yml");
 
     public static void setData(String id, String value){
@@ -20,7 +20,7 @@ public class DiscordData {
     }
 
     public static String getToken(){
-        if(debug) return "xd";
+        if(debug) return "que buscas crack?";
         else return getData("token", "");
     }
 

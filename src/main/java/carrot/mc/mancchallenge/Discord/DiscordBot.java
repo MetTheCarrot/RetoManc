@@ -30,6 +30,7 @@ public class DiscordBot {
     private static TextChannel deathChannelNotify;
     private static TextChannel completeRetosChannelNotify;
     private static TextChannel totemChannelNotify;
+    private static boolean isBotStarted = false;
 
     public static void startBot(){
         try{
@@ -45,13 +46,11 @@ public class DiscordBot {
             deathChannelNotify = jda.getTextChannelById(deathChannelID);
             totemChannelNotify = jda.getTextChannelById(totemChatChannelId);
             completeRetosChannelNotify = jda.getTextChannelById(retosChatChannelID);
+            isBotStarted = true;
         } catch (Exception e){
-            e.printStackTrace();
             Chat.console(Level.SEVERE, "Error al iniciar el bot de discord, el token es invalido.");
             Chat.console(Level.SEVERE, "No tener un bot iniciado, no podemos comprobar tus resultados.");
             Chat.console(Level.SEVERE, "Si no tienes un bot, puedes crear uno en https://discord.com/developers/applications");
-            Chat.console(Level.SEVERE, "El plugin no podra iniciarse hasta entonces.");
-            Main.getPlugin().getPluginLoader().disablePlugin(Main.getPlugin());
         }
     }
 
@@ -60,7 +59,7 @@ public class DiscordBot {
 
         embed.addField(":compass: Localización", RetoUtils.getLocationString(target.getLocation()), true);
         embed.addField("\uD83D\uDDFA️ Mundo", RetoUtils.getWorld(target), true);
-        embed.addField(":star: Tiempo jugado: ", Timestamp.TimestampWithDay(String.valueOf(Math.round(target.getStatistic(org.bukkit.Statistic.PLAY_ONE_MINUTE) / 20))), true);
+        embed.addField(":star: Tiempo jugado: ", Timestamp.TimestampWithDay(String.valueOf(Math.round(target.getStatistic(org.bukkit.Statistic.PLAY_ONE_MINUTE) / 20.0))), true);
 
         // Informacion del jugador
 
@@ -133,6 +132,7 @@ public class DiscordBot {
     }
 
     public static void sendEmbed(TextChannel channel, EmbedBuilder embed){
+        if (!isBotStarted) return;
         channel.sendMessage(embed.build()).queue();
     }
 

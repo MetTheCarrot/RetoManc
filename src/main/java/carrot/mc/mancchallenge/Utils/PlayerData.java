@@ -3,6 +3,7 @@ package carrot.mc.mancchallenge.Utils;
 import carrot.mc.mancchallenge.Data.PersistentData;
 import carrot.mc.mancchallenge.Discord.DiscordBot;
 import carrot.mc.mancchallenge.Main;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -79,10 +80,6 @@ public class PlayerData {
         DiscordBot.sendNotCompleteReto(target);
     }
 
-    public static boolean isDeath(Player target){
-        return Boolean.parseBoolean(get(target, "death", "false"));
-    }
-
     public static void updateDay(Player target, int day){
         int newDay = day - 1;
         // Reto 21
@@ -98,6 +95,7 @@ public class PlayerData {
     public static void completeReto(Player target, int reto){
         if(isComplete(target, reto)) return;
         set(target, "reto" + reto, "true");
+        target.playSound(target.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F);
         Chat.broadCast("&a" + target.getName() + " ha completado el reto " + reto + "!");
         sendCompleteReto(target);
         regen1Cora(target);
@@ -120,7 +118,8 @@ public class PlayerData {
 
     public static void setDropItem(Player target, int reto, String item, int amount){
         int contador = getDropItem(target, reto, item) + amount;
-        target.sendMessage(item + "-drop: " + contador);
+        target.playSound(target.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F);
+        //target.sendMessage(item + "-drop: " + contador);
         set(target, reto + "drop" + item, String.valueOf(contador));
     }
 
@@ -130,7 +129,8 @@ public class PlayerData {
 
     public static void setCountMobs(Player target, int reto, String mob, int amount){
         int contador = getCountMobs(target, reto, mob) + amount;
-        target.sendMessage(mob + "-killed: " + contador);
+        target.playSound(target.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F);
+        //target.sendMessage(mob + "-killed: " + contador);
         set(target, reto + "mobs" + mob, String.valueOf(contador));
     }
 

@@ -178,7 +178,7 @@ public class Bossbar {
             case 15:
                 return "Mata todo los tipos de esqueletos";
             case 16:
-                return "Completa una raid de nivel 5";
+                return "Consigue el arco con power X";
             case 17:
                 return "Mata a cada uno de los tipos de esqueletos";
             case 18:

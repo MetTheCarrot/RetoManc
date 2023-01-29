@@ -4,6 +4,8 @@ import carrot.mc.mancchallenge.Data.CreateFile;
 import carrot.mc.mancchallenge.Main;
 import carrot.mc.mancchallenge.Task.Pause;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -23,6 +25,19 @@ public class Day {
     }
 
     private static final boolean debug = false;
+
+    public static boolean isActiveBossBattleMode(){
+        return bool(getData("bossmode", "false"));
+    }
+
+    public static void toggleBossBattleMode(){
+        boolean isActive = !isActiveBossBattleMode();
+        setData("bossmode", str(isActive));
+        broadCast("&c&lBoss Battle Mode " + (isActive ? "&6activado" : "&cdesactivado"));
+        for(World world : Bukkit.getWorlds())
+            world.setGameRule(GameRule.NATURAL_REGENERATION, (!isActive));
+        broadCast("&c&lRegeneración natural en todos los mundos " + (isActive ? "&cdesactivada" : "&6activada") + "&c&l.");
+    }
 
     private static final CreateFile data = new CreateFile(Main.getPlugin(),"day.yml");
 
@@ -173,6 +188,7 @@ public class Day {
             for(Player target: Bukkit.getOnlinePlayers()){
                 updateDay(target, newDay);
             }
+            taskRetos(); // La task de los retos se reinicia cada vez que cambia el día
             setData("day", str(newDay));
             mensaje("Dia " + newDay);
         }

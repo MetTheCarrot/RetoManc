@@ -1,6 +1,5 @@
 package carrot.mc.mancchallenge.Commands;
 
-import carrot.mc.mancchallenge.Discord.DiscordBot;
 import carrot.mc.mancchallenge.Utils.Day;
 import carrot.mc.mancchallenge.Utils.PlayerData;
 import org.bukkit.command.Command;
@@ -10,14 +9,14 @@ import org.bukkit.entity.Player;
 
 import static carrot.mc.mancchallenge.Utils.Chat.color;
 
-public class Public implements CommandExecutor {
+public class Pause implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+        Day.setPause(!Day.isPause());
         if(!(sender instanceof Player)) return false;
         Player target = (Player) sender;
         if(args.length == 0){
-            Day.setPause(!Day.isPause());
             target.sendMessage(color("&aEl juego ha sido " + (Day.isPause() ? "pausado" : "reanudado") + "!"));
         }
         if(args.length > 0){

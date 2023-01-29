@@ -1,5 +1,6 @@
 package carrot.mc.mancchallenge.Utils;
 
+import carrot.mc.mancchallenge.Main;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -8,7 +9,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static carrot.mc.mancchallenge.Utils.Chat.broadCast;
 import static carrot.mc.mancchallenge.Utils.Chat.color;
 
 public class RetoUtils {
@@ -182,7 +182,7 @@ public class RetoUtils {
     }
 
     public static boolean haveName(Entity entity, String name) {
-        Chat.broadCast("Entity name: " + entity.getCustomName());
+        //Chat.broadCast("Entity name: " + entity.getCustomName());
         return entity.getCustomName() != null && color(entity.getCustomName()).equals(color(name));
     }
 

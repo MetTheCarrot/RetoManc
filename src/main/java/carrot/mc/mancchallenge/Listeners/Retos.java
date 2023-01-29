@@ -26,8 +26,7 @@ import org.bukkit.potion.PotionType;
 import java.util.*;
 
 import static carrot.mc.mancchallenge.Utils.Chat.color;
-import static carrot.mc.mancchallenge.Utils.Day.getDay;
-import static carrot.mc.mancchallenge.Utils.Day.isPause;
+import static carrot.mc.mancchallenge.Utils.Day.*;
 import static carrot.mc.mancchallenge.Utils.PlayerData.getCountMobs;
 import static carrot.mc.mancchallenge.Utils.PlayerData.setCountMobs;
 import static carrot.mc.mancchallenge.Utils.RetoUtils.*;
@@ -143,6 +142,8 @@ public class Retos implements Listener {
         }
         // Reto 10
         if(day == 10 && mob.equals(EntityType.ENDER_DRAGON)){
+            if(isActiveBossBattleMode())
+                toggleBossBattleMode(); // Desactivar boss battle mode
             for(Player players: Bukkit.getOnlinePlayers()){
                 PlayerData.completeReto(players, 10);
             }
@@ -185,14 +186,6 @@ public class Retos implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    private static void finishRaid(RaidFinishEvent e){
-        int levelRaid = e.getRaid().getBadOmenLevel();
-        for(Player target : e.getWinners())
-            // Reto 16
-            if(getDay() == 16 && levelRaid == 5) PlayerData.completeReto(target, 16);
-    }
-
     public static boolean isShulkerBox(ItemStack item){
         // si el nombre termina con "BOX" es un shulker box
         return (item.getType().name().endsWith("BOX"));
@@ -202,7 +195,7 @@ public class Retos implements Listener {
     private static void dropItem(PlayerDropItemEvent e){
         Player target = e.getPlayer();
         ItemStack item = e.getItemDrop().getItemStack();
-        target.sendMessage("dropeaste un item" + item.getType().name());
+        //target.sendMessage("dropeaste un item" + item.getType().name());
         int day = getDay();
         if(day == 12){
             if(isShulkerBox(item)){

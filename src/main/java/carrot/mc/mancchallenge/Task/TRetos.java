@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,6 +26,16 @@ public class TRetos {
                 total += item.getAmount();
         }
         return total;
+    }
+
+    public static boolean haveBowWithPowerX(Player target){
+        for(ItemStack item : target.getInventory().getContents()){
+            if(item == null || !item.getType().equals(Material.BOW)) continue;
+            // power x
+            if(item.getEnchantmentLevel(Enchantment.ARROW_DAMAGE) == 10)
+                return true;
+        }
+        return false;
     }
 
     public static int getDurability(ItemStack item){
@@ -59,6 +70,14 @@ public class TRetos {
                             target.playSound(target.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
                             target.getInventory().setChestplate(null);
                             PlayerData.completeReto(target, 14);
+                        }
+                    }
+                    // Reto 16
+                    if(day == 16){
+                        if(PlayerData.isComplete(target, 16)) return;
+                        if(haveBowWithPowerX(target)){
+                            PlayerData.completeReto(target, 16);
+
                         }
                     }
                 }

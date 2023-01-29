@@ -36,16 +36,24 @@ public class Chat {
         int day = Day.getDay();
         double retos = 8 / 21.0; // 8 colores para 21 retos
         int progreso = (int) Math.floor(retos * day);
-        String colorElegido = "&a"; // 0 - 1
-        if(progreso == 2) colorElegido = "&2";
-        else if (progreso == 3) colorElegido = "&e";
-        else if (progreso == 4) colorElegido = "&6";
-        else if (progreso == 5) colorElegido = "&d";
-        else if (progreso == 6) colorElegido = "&5";
-        else if (progreso == 7) colorElegido = "&8";
-        else if (progreso >= 8) colorElegido = "&0";
-
-        return color(colorElegido);
+        switch(progreso){
+            case 0:
+            case 1:
+                return "&a";
+            case 2:
+                return "&2";
+            case 3:
+                return "&e";
+            case 4:
+                return "&6";
+            case 5:
+                return "&d";
+            case 6:
+                return "&5";
+            case 7:
+                return "&8";
+            default: return "&0";
+        }
     }
 
     public static String getPrefix(){
